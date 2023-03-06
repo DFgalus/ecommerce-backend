@@ -70,10 +70,16 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-  Product.create(req.body)
+  Product.create({
+    product_name: req.body.product_name,
+    price: req.body.price,
+    stock: req.body.stock,
+    category_id: req.body.category_id,
+    tagIds: req.body.tagIds
+    })
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
+      if (req.body.tagIds) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
             product_id: product.id,
@@ -143,7 +149,7 @@ router.delete('/:id', (req, res) => {
     })
     .then(dbProductData => {
     if (!dbProductData) {
-        rs.status(404).json({ message: 'No product found with this id' });
+        res.status(404).json({ message: 'No product found with this id' });
         return;
     }
     res.json(dbProductData);
